@@ -81,6 +81,21 @@ class BasicFieldTests(test.TestCase):
         field = models.CharField(choices=choices)
         klass = CustomChoiceField
         self.assertIsInstance(field.formfield(form_class=klass), klass)
+        
+    def test_field_prep_value_test(self):
+        test_value = Whiz.objects.create(c=1)
+        
+        parent = BooleanModel()
+        parent.bfield = True
+        parent.string = test_value
+        parent.save()
+        
+        parent_copy = BooleanModel.objects.get(pk=parent.pk)
+        parent_copy.string = test_value
+        parent_copy.save()
+        
+        parent_copy2 = BooleanModel.objects.get(pk=parent.pk)
+        self.assertEqual(parent_copy2.string, parent.string)
 
 
 class DecimalFieldTests(test.TestCase):
